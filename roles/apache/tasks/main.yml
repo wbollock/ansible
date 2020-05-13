@@ -1,0 +1,3 @@
+---
+- name: Setup Apache
+  import_tasks: apache.yaml

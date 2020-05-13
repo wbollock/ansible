@@ -1,0 +1,76 @@
+---
+  - name: Set ZSH user
+    set_fact:
+      zsh_user: wbollock
+
+  - name: Install ZSH
+    apt:
+      name: zsh
+      state: present
+
+  - name: Clone Prezto
+    git: 
+      repo: https://github.com/sorin-ionescu/prezto.git
+      dest: /home/{{ zsh_user }}/.zprezto
+      recursive: yes
+      force: yes
+    register: clone_prezto
+# note: force yes will overwrite changes
+
+  - name: Setup Prezto
+    file: 
+      src: '/home/{{ zsh_user }}/{{ item.src}}'
+      dest: '/home/{{ zsh_user }}/{{ item.dest}}'
+      state: link
+    loop:
+      - { src: .zprezto/runcoms/zlogin, dest: .zlogin }
+      - { src: .zprezto/runcoms/zlogout, dest: .zlogout }
+    #  - { src: .zprezto/runcoms/zpreztorc, dest: .zpreztorc }
+      - { src: .zprezto/runcoms/zprofile, dest: .zprofile }
+      - { src: .zprezto/runcoms/zshenv, dest: .zshenv }
+      - { src: .zprezto/runcoms/zshrc, dest: .zshrc }
+
+  - name: Download auto suggestions
+    git: 
+      repo: https://github.com/zsh-users/zsh-autosuggestions
+      dest: /home/{{ zsh_user }}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+    when: clone_prezto.changed
+
+  - name: Enable auto suggestions
+    lineinfile:
+      path: /home/{{ zsh_user }}/.zshrc
+      line: source /home/{{ zsh_user }}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+      create: no
+# "domain users" for SSSD
+  - name: Set zpreztorc configuration, including theme and auto suggestions
+    copy:
+      src: ../files/{{ zsh_user }}_zpreztorc
+      dest: /home/{{ zsh_user }}/.zpreztorc
+      owner: "{{ zsh_user }}"
+      group: "{{ zsh_user }}"
+      mode: '0700'
+
+  - name: Enable zsh for {{ zsh_user }}, user does not exist in /etc/passwd
+    blockinfile:
+      path: /home/{{ zsh_user }}/.profile
+      block: |
+        if [ "$SHELL" != "/bin/zsh" ]
+        then
+            export SHELL="/bin/zsh"
+            exec /bin/zsh -l    # -l: login shell again
+        fi
+
+   # also enable tldr per user
+  - name: Download TLDR bash client
+    get_url:
+      url: https://raw.githubusercontent.com/raylee/tldr/master/tldr
+      dest: /usr/bin/tldr
+      mode: '0755'
+
+  - name: Recurisvely set permissions on ~/.config
+    file:
+      path: /home/{{ zsh_user }}/.config
+      state: directory
+      recurse: yes
+      owner: "{{ zsh_user }}"
+      group: "{{ zsh_user }}"

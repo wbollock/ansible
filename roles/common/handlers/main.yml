@@ -1,0 +1,27 @@
+---
+# handlers file for common
+    - name: restart resolvconf
+      service:
+        name: resolvconf
+        state: restarted
+
+    - name: reload systemd
+      command: systemctl daemon-reload
+
+    - name: restart fail2ban
+      service:
+        name: fail2ban
+        state: restarted
+
+    - name: restart snmpd
+      service:
+        name: snmpd
+        state: restarted
+
+    - name: enable snmpd
+      systemd:
+        name: snmpd
+        state: started
+        enabled: yes
+        
+   

@@ -1,0 +1,8 @@
+---
+  - name: Install molly-guard
+    apt:
+      name: molly-guard
+      state: present
+# maybe configure one day if needed
+# bypass with /lib/molly-guard
+

@@ -1,0 +1,79 @@
+---
+- name: Check for php version
+  shell: php -v | grep -Po '(?<=PHP )([0-9.]+)'
+  register: php_version
+
+- name: Set wanted PHP version
+  set_fact:
+    wanted_php_version: '7.4'
+
+- name: Print php version
+  debug:
+    msg: "{{ php_version.stdout }}"
+
+- name: Check if Apache exists
+  shell: systemctl status apache2
+  failed_when: false
+  changed_when: false
+  register: apache_status
+
+- name: Add ondrej apache2 php repo
+  apt_repository:
+    repo: ppa:ondrej/apache2 
+    state: present
+  when: apache_status.rc|int == 0 and ansible_distribution == 'Ubuntu' and php_version.stdout < [wanted_php_version] and ansible_distribution_version <= '20.04'
+
+- name: Update Apache2 for new repo
+  apt:
+    name: apache2
+    state: present
+  when: apache_status.rc|int == 0 and ansible_distribution == 'Ubuntu' and php_version.stdout < [wanted_php_version]
+  register: apache2
+
+- name: Add PHP repo
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+  when: ansible_distribution == 'Ubuntu' and php_version.stdout < [wanted_php_version] and ansible_distribution_version <= '20.04'
+
+- name: Update PHP to {{ wanted_php_version }}
+  apt:
+    pkg:
+    - libapache2-mod-php{{ wanted_php_version }}
+    - php{{ wanted_php_version }}
+    - php{{ wanted_php_version }}-cli
+    - php{{ wanted_php_version }}-curl
+    - php{{ wanted_php_version }}-gd
+    - php{{ wanted_php_version }}-json
+    - php{{ wanted_php_version }}-mbstring
+    - php{{ wanted_php_version }}-mysql
+    - php{{ wanted_php_version }}-snmp
+    - php{{ wanted_php_version }}-xml
+    - php{{ wanted_php_version }}-zip
+    - python3-pip
+    state: present
+    update_cache: yes
+    autoremove: yes
+    autoclean: yes
+  when: ansible_distribution == 'Ubuntu'
+  register: php_update
+
+- name: Set php timezone
+  lineinfile:
+    path: /etc/php/{{ wanted_php_version }}/cli/php.ini
+    regexp: '^;date.timezone ='
+    line: date.timezone = America/New_York
+    create: no
+ 
+- name: Set php timezone for apache
+  lineinfile:
+    path: /etc/php/{{ wanted_php_version }}/apache2/php.ini
+    regexp: '^;date.timezone ='
+    line: date.timezone = America/New_York
+    create: no
+
+- name: Start Apache if it was just installed or php updated
+  systemd:
+    state: started
+    name: apache2
+  when: apache2.changed or php_update.changed

@@ -1,0 +1,47 @@
+---
+  - name: Check if Apache exists
+    shell: systemctl status apache2
+    failed_when: false
+    changed_when: false
+    register: apache_status
+
+  - name: Install Apache
+    apt:
+      name: apache2
+      state: present
+    when: apache_status.rc|int != 0
+
+  - name: Enable and start apache
+    systemd:
+      state: started
+      enabled: yes
+      name: apache2
+    when: apache_status.rc|int != 0
+
+
+  - name: Add cci.conf to apache (security settings)
+    copy:
+      src: ../files/apache-sslprotocols.conf
+      dest: /etc/apache2/conf-available/ssl-protocols.conf
+      owner: root
+      group: root
+      mode: '0644'
+    when: apache_status.rc|int == 0
+
+  - name: Enable Apache ssl mod
+    apache2_module:
+      name: ssl
+      state: present
+    when: apache_status.rc|int == 0
+
+  - name: Enable Apache conf
+    shell:
+      cmd: a2enconf ssl-protocols
+    when: apache_status.rc|int == 0
+
+  - name: Restart and reload apache
+    systemd:
+      state: restarted
+      daemon-reload: yes
+      name: apache2
+    when: apache_status.rc|int == 0

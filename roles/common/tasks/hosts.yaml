@@ -1,0 +1,12 @@
+---
+# set /etc/hosts
+- name: Configure hosts file
+  become: yes
+  template:
+    src: ../templates/hosts.j2
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_hostname != "asimov.boll"
+# skip cause its a dns server

@@ -1,0 +1,7 @@
+---
+# tasks file for libre
+- name: Setup Python
+  import_tasks: python.yaml
+
+- name: Setup PHP
+  import_tasks: php.yaml

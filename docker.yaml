@@ -1,0 +1,6 @@
+---
+- hosts: docker
+  tasks:
+    - include_role:
+        name: docker
+# common depends on apache/mysql first

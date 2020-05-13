@@ -1,0 +1,73 @@
+[sshd]
+enabled = true
+port = 22
+filter = sshd
+logpath = /var/log/auth.log
+findtime = 600
+maxretry = 5
+bantime = 3600
+ignoreip = 104.222.21.33 172.105.149.192 192.168.0.0/24
+
+[recidive]
+enabled = true
+port = 22
+filter = recidive
+logpath = /var/log/fail2ban.log
+findtime = 86400
+maxretry = 3
+bantime = -1
+ignoreip = 104.222.21.33 172.105.149.192 192.168.0.0/24
+protocol = all
+action   = iptables-allports[name=sshd-perma, protocol=all]
+
+[apache]
+# detect password authentication failures
+enabled  = true
+port     = http,https
+filter   = apache-auth
+logpath  = /var/log/apache*/*error.log 192.168.0.0/24
+bantime = 3600
+maxretry = 3
+ignoreip = 104.222.21.33 172.105.149.192
+action   = iptables-multiport[name=auth, port="http,https"]
+
+[apache-overflows]
+enabled  = true
+port     = http,https
+filter   = apache-overflows
+logpath  = /var/log/apache*/*error.log
+ignoreip = 104.222.21.33 172.105.149.192 192.168.0.0/24
+bantime = 3600
+maxretry = 2
+action   = iptables-multiport[name=overflows, port="http,https"]
+
+[apache-badbots]
+enabled  = true
+port     = http,https
+filter   = apache-badbots
+logpath  = /var/log/apache*/*error.log
+ignoreip = 104.222.21.33 172.105.149.192 192.168.0.0/24
+bantime = 3600
+maxretry = 1
+action   = iptables-multiport[name=badbots, port="http,https"]
+
+[php-url-fopen]
+enabled = true
+port    = http,https
+filter  = php-url-fopen
+logpath = /var/log/apache*/*access.log
+ignoreip = 104.222.21.33 172.105.149.192 192.168.0.0/24
+bantime = 3600
+maxretry = 10
+action   = iptables-multiport[name=php-url-fopen, port="http,https"]
+
+[apache-404]
+enabled = true
+port = http,https
+filter = apache-404
+logpath = /var/log/apache*/*access.log
+bantime = 1800
+maxretry = 30
+findtime = 120
+ignoreip = 104.222.21.33 172.105.149.192 192.168.0.0/24
+action   = iptables-multiport[name=404, port="http,https"]

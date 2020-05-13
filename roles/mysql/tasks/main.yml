@@ -1,0 +1,4 @@
+---
+# tasks file for mysql
+- name: Setup MySQL
+  import_tasks: mysql.yaml

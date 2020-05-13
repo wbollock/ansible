@@ -1,0 +1,6 @@
+---
+# REQUIRED ROLES
+- import_playbook: web_db_servers.yaml
+- import_playbook: normal.yaml
+# OPTIONAL ROLES
+- import_playbook: docker.yaml

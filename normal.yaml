@@ -1,0 +1,8 @@
+---
+- hosts: normal
+  tasks:
+    #- include_role:
+     #   name: normal
+# really, I just want normal hosts to get common for now
+    - include_role:
+        name: common

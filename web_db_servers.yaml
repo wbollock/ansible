@@ -1,0 +1,10 @@
+---
+- hosts: web_db_servers
+  tasks:
+    - include_role:
+        name: apache
+    - include_role:
+        name: mysql
+    - include_role:
+        name: common
+# common depends on apache/mysql first

@@ -1,0 +1,14 @@
+---
+- name: Check for python version
+  command: python3 --version
+  register: python_version
+
+- name: Print python version
+  debug:
+    msg: "{{ python_version.stdout }}"
+
+- name: Install python3
+  apt:
+    name: python3
+    state: present
+   

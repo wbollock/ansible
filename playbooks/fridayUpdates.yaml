@@ -1,0 +1,63 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Check if python3 exists
+    stat: path=/usr/bin/python3
+    register: python3_exists
+
+  - name: Check if molly-guard exists
+    stat: path=/lib/molly-guard/
+    register: molly_guard_exists
+
+  - name: Get time mins until Monday 3am for python3
+    command: python3 -c "from datetime import datetime, timedelta;today = now = datetime.today();today = datetime(today.year, today.month, today.day);var = (timedelta(days=7-now.weekday()) + today - now);print(round((var.total_seconds()/60 + 180)))"
+    register: mins_monday
+    when: python3_exists.stat.exists == True
+# python2 version is avaiable (just python), use python3 instead please
+
+  # enable for debug
+  #- debug: var=mins_monday
+  - name: Cancel any prior pending restarts with molly-guard installed
+    shell:
+      cmd: /lib/molly-guard/shutdown -c
+    when: python3_exists.stat.exists == True and molly_guard_exists.stat.exists == True
+
+  - name: Cancel any prior pending restarts
+    shell:
+      cmd: shutdown -c
+    when: python3_exists.stat.exists == True and molly_guard_exists.stat.exists == False
+# mollyguard version
+# sudo /lib/molly-guard/shutdown -r +{{ mins_monday.stdout }}
+# sudo /lib/molly-guard/shutdown -c
+  - name: Schedule restart with molly-guard installed
+    shell: 
+      cmd: /lib/molly-guard/shutdown -r +{{ mins_monday.stdout }}
+    when: python3_exists.stat.exists == True and molly_guard_exists.stat.exists == True
+
+
+# non-mollyguard version
+  - name: Schedule restart without mollyguard
+    shell: 
+      cmd: shutdown -r +{{ mins_monday.stdout }}
+    when: python3_exists.stat.exists == True and molly_guard_exists.stat.exists == False
+
+# NOTE: check the shutdown time on a server with:
+# date -d "@$( awk -F '=' '/USEC/{ $2=substr($2,1,10); print $2 }' /run/systemd/shutdown/scheduled )"
+
+  - name: Update and upgrade apt packages
+    apt:
+      upgrade: dist
+      update_cache: yes
+      autoremove: yes
+      autoclean: yes
+    when: python3_exists.stat.exists == True
+
+  - name: Update and upgrade apt packages two hours before restart
+    at:
+      command: apt-get update && apt-get dist-upgrade
+      count: "{{ mins_monday.stdout|int - 120 }}"
+      unique: yes
+      units: minutes
+    when: python3_exists.stat.exists == True

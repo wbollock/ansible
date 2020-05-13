@@ -1,0 +1,21 @@
+---
+  - name: Install SNMP packages
+    apt:
+      pkg:
+      - snmp
+      - snmpd
+      - snmp-mibs-downloader
+    notify:
+      - enable snmpd
+
+  - name: Replace snmpd.conf
+    copy:
+      src: ../files/snmpd.conf
+      dest: /etc/snmp/snmpd.conf
+      owner: root
+      group: root
+      mode: '0644'
+    notify:
+      - restart snmpd
+ 
+    # runs the snmp.sh script on all hosts

@@ -1,0 +1,29 @@
+---
+# Note: bind9 is used with virtualmin. i decided to leave it on and not remove it
+# this set of tasks will remove bind9 from any host and setup new DNS servers
+# check DNS manually though after running this. you'll probably have to set new DNS servers
+# in /etc/network/interfaces or cloudinit stuff
+
+  - name: Purge bind9 if installed
+    apt:
+      pkg:
+      - bind9
+      - bind9-host
+      - bind9utils
+      state: absent
+      purge: yes
+  - name: copy local base to remote if exists
+    stat:
+      path: "/etc/resolvconf/resolv.conf.d/base"
+    register: base_exists
+   
+  - name: Replace resolv.conf base on machines that have it
+    copy:
+      src: ../files/resolv_base
+      dest: /etc/resolvconf/resolv.conf.d/base
+      owner: root
+      group: root
+      mode: '0644'
+    when: base_exists.stat.exists
+    notify:
+       - restart resolvconf

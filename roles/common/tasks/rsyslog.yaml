@@ -1,0 +1,94 @@
+---
+  - name: Check if Apache exists
+    shell: systemctl status apache2
+    failed_when: false
+    changed_when: false
+    register: apache_status
+    #when: apache_status.rc|int == 0
+
+  - name: Check if Fail2ban exists
+    shell: systemctl status fail2ban
+    failed_when: false
+    changed_when: false
+    register: fail2ban_status
+    #when: apache_status.rc|int == 0
+
+  - name: Check if MySQL exists
+    shell: systemctl status mysql
+    failed_when: false
+    changed_when: false
+    register: mysql_status
+    #when: apache_status.rc|int == 0
+
+  - name: Check if apt installed
+    stat: path=/usr/bin/apt
+    register: apt_exists
+
+  - name: Check if ansible installed
+    stat: path=/usr/bin/ansible
+    register: ansible_exists
+
+  - name: Make sure rsyslog is up to date
+    apt:
+      name: rsyslog
+      state: present 
+
+    # base file, all hosts get this
+  - name: Basic syslog logging and forwarding to servermgr
+    copy:
+      src: ../files/rsyslog-00-graylog.conf
+      dest: /etc/rsyslog.d/00-graylog.conf
+      owner: root
+      group: root
+      mode: '0644'
+  #install rsyslog
+# adds access and error.log to logging if apache installed
+  - name: Add rsyslog conf for apache
+    copy:
+      src: ../files/rsyslog-01-graylog_apache.conf
+      dest: /etc/rsyslog.d/01-graylog_apache.conf
+      owner: root
+      group: root
+      mode: '0644'
+    when: apache_status.rc|int == 0
+
+  - name: Add rsyslog conf for fail2ban
+    copy:
+      src: ../files/rsyslog-02-graylog_fail2ban.conf
+      dest: /etc/rsyslog.d/02-graylog_fail2ban.conf
+      owner: root
+      group: root
+      mode: '0644'
+    when: fail2ban_status.rc|int == 0
+
+  - name: Add rsyslog conf for apt
+    copy:
+      src: ../files/rsyslog-03-graylog_apt.conf
+      dest: /etc/rsyslog.d/03-graylog_apt.conf
+      owner: root
+      group: root
+      mode: '0644'
+    when: apt_exists.stat.exists == True
+
+  - name: Add rsyslog conf for mysql
+    copy:
+      src: ../files/rsyslog-04-graylog_mysql.conf
+      dest: /etc/rsyslog.d/04-graylog_mysql.conf
+      owner: root
+      group: root
+      mode: '0644'
+    when: mysql_status.rc|int == 0
+
+  - name: Add rsyslog conf for ansible
+    copy:
+      src: ../files/rsyslog-05-graylog_ansible.conf
+      dest: /etc/rsyslog.d/05-graylog_ansible.conf
+      owner: root
+      group: root
+      mode: '0644'
+    when: ansible_exists.stat.exists == True
+
+  - name: Restart rsyslog service after line appended
+    systemd:
+      name: rsyslog
+      state: restarted

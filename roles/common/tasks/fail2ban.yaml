@@ -1,0 +1,52 @@
+---
+  - name: Check if Apache exists
+    shell: systemctl status apache2
+    failed_when: false
+    changed_when: false
+    register: apache_status
+
+  - name: install apt fail2ban packages
+    apt:
+      name: fail2ban
+      state: present
+
+  - name: override the basic fail2ban configuration with .local file
+    copy:
+      src: ../files/fail2ban-jail.local
+      dest: /etc/fail2ban/jail.local
+      owner: root
+      group: root
+      mode: 0644
+    when: apache_status.rc|int != 0
+    notify:
+      - restart fail2ban
+
+  - name: Apache only jail.local
+    copy:
+      src: ../files/fail2ban-apache_jail.local
+      dest: /etc/fail2ban/jail.local
+      owner: root
+      group: root
+      mode: 0644
+    when: apache_status.rc|int == 0
+    register: apache_only_jail
+    notify:
+      - restart fail2ban
+
+  - name: Apache 404 filter
+    copy:
+      src: ../files/fail2ban-apache-404.conf
+      dest: /etc/fail2ban/filter.d/apache-404.conf
+      owner: root
+      group: root
+      mode: 0644
+    when: apache_status.rc|int == 0
+    register: apache_404_jail
+    notify:
+      - restart fail2ban
+
+  - name: make sure fail2ban is enabled on boot and restarted
+    systemd:
+      name: fail2ban
+      enabled: yes
+      state: started

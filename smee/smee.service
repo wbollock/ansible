@@ -1,0 +1,10 @@
+[Unit]
+Description=Smee Service
+#path should be /etc/systemd/system/smee.service
+
+[Service]
+ExecStart=/etc/ansible/smee/smee.sh
+#ExecStop=pkill smee
+
+[Install]
+WantedBy=multi-user.target

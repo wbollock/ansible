@@ -1,0 +1,36 @@
+---
+- name: Install python docker packages
+  apt:
+    pkg:
+    - python-docker
+    - python3-pip
+ 
+# pip3 install --upgrade pip
+# pip3 install docker
+#- name: Update pip
+#  shell:
+#    cmd: pip3 install --upgrade pip
+- name: Update pip
+  pip:
+    name: pip
+    executable: pip3
+    state: latest
+
+- name: Install pip package
+  pip:
+    name: docker   
+ 
+- name: Set Docker container parameters
+  set_fact:
+    watchtower_container_parameters:
+      name: "{{ watchtower_name }}"
+      image: "{{ watchtower_image }}"
+      state: started
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+      env:
+          WATCHTOWER_SCHEDULE: "0 0 5 * * ?"
+
+- name: Create Watchtower container
+  docker_container: "{{ watchtower_container_parameters | combine(watchtower_docker_additional_options) }}"
+  register: watchtower_container

@@ -1,0 +1,29 @@
+---
+  - name: Check if mysql exists
+    shell: systemctl status mysql
+    failed_when: false
+    changed_when: false
+    register: mysql_status
+# NOTE: on wboll.dev, mysql-client-5.7 and mysql-server-5.7 are usedmysql-server-5.7mysql-server-5.7
+  - name: Install MySQL
+    apt:
+      pkg:
+      - mysql-server-5.7
+      - mysql-client-5.7
+      state: present
+    when: mysql_status.rc|int != 0
+    register: install_mysql
+
+  - name: Enable and start mysql
+    systemd:
+      state: started
+      enabled: yes
+      name: mysql
+    when: mysql_status.rc|int != 0
+
+  - name: Restart mysql
+    systemd:
+      state: restarted
+      daemon-reload: yes
+      name: mysql
+    when: install_mysql.changed

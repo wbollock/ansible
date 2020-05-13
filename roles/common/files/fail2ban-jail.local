@@ -1,0 +1,21 @@
+[sshd]
+enabled = true
+port = 22
+filter = sshd
+logpath = /var/log/auth.log
+findtime = 600
+maxretry = 5
+bantime = 3600
+ignoreip = 104.222.21.33 172.105.149.192 192.168.0.0/24
+
+[recidive]
+enabled = true
+port = 22
+filter = recidive
+logpath = /var/log/fail2ban.log
+findtime = 86400
+maxretry = 3
+bantime = -1
+ignoreip = 104.222.21.33 172.105.149.192 192.168.0.0/24
+protocol = all
+action   = iptables-allports[name=sshd-perma, protocol=all]
