@@ -1,4 +1,7 @@
 ---
+# DISABLED:
+# when != didn't work for whatever reason
+# and fatal: [localhost]: FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: 'ansible_eth0' is undefined"}
 # set /etc/hosts
 - name: Configure hosts file
   become: yes

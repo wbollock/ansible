@@ -11,7 +11,7 @@
 - name: Setup ZSH for wbollock
   import_tasks: zsh.yaml
 #NOTE: need to exclude asimov.boll from thise
-- name: Set /etc/hosts
-  import_tasks: hosts.yaml
+#- name: Set /etc/hosts
+#  import_tasks: hosts.yaml
 - name: Install molly-guard 
   import_tasks: molly-guard.yaml
