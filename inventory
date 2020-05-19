@@ -13,6 +13,7 @@ localhost
 [docker]
 wboll.dev
 localhost
+asimov.boll
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
