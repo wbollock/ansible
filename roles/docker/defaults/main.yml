@@ -30,8 +30,17 @@ docker_yum_gpg_key: https://download.docker.com/linux/centos/gpg
 # A list of users who will be added to the docker group.
 docker_users: []
 
+# Watchtower Parameters
 watchtower_name: watchtower
 watchtower_image: containrrr/watchtower
 
 watchtower_docker_additional_options:
+  restart_policy: unless-stopped
+
+# Node-Exporter Parameters
+node_exporter_name: monitoring_node_exporter
+node_exporter_image: prom/node-exporter:latest
+node_exporter_ports: '9100:9100'
+
+node_exporter_docker_additional_options:
   restart_policy: unless-stopped

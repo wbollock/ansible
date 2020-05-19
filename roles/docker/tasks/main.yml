@@ -27,3 +27,5 @@
   when: docker_users | length > 0
 
 - include_tasks: watchtower.yml
+
+- include_tasks: node-exporter.yml
