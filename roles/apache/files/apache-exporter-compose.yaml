@@ -1,0 +1,8 @@
+version: '3.3'
+services:
+    apache_exporter:
+        ports:
+            - '9117:9117'
+        image: apache_exporter
+        environment:
+          - scrape_uri="https://wboll.dev/server-status

@@ -1,0 +1,14 @@
+---
+# archived cause using "make" on the project root always had an error
+# not really a docker container, have to install go on the host and build from source
+- name: git clone the project
+
+- name: Create Apache-Exporter docker container for prometheus
+  docker_container:
+    name: apache_exporter
+    image: apache_exporter
+    ports:
+     - "9117:9117"
+    env:
+        scrape_uri="https://{{ inventory_hostname }}/server-status/?auto"
+
