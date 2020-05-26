@@ -1,0 +1,6 @@
+---
+- hosts: bitwarden
+  tasks:
+    - include_role:
+        name: bitwarden
+# common depends on apache/mysql first

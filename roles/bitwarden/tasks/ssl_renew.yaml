@@ -1,0 +1,13 @@
+---
+- name: Restart bitwarden once a month, turn off apache, renew cert if needed
+  cron:
+    name: bitwarden_certbot
+    minute: "0"
+    hour: "2"
+    day: "1"
+    month: "*"
+    weekday: "*"
+    user: root
+    state: present
+    job: "systemctl stop apache2; bash /home/wbollock/scripts/bitwarden.sh updateself; bash /home/wbollock/scripts/bitwarden.sh update; bash /home/wbollock/scripts/bitwarden.sh restart; systemctl start apache2"
+    cron_file: /etc/crontab

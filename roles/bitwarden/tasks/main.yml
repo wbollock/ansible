@@ -1,0 +1,4 @@
+---
+# tasks file for bitwarden
+- name: Renew SSL  (stop apache2, restart bw)
+  import_tasks: ssl_renew.yaml 
