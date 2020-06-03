@@ -1,0 +1,53 @@
+---
+  - name: Check if Apache exists
+    shell: systemctl status apache2
+    failed_when: false
+    changed_when: false
+    register: apache_status
+
+  - name: Add cci.conf to apache (security settings)
+    copy:
+      src: ../files/apache-settings.conf
+      dest: /etc/apache2/conf-available/apache-settings.conf
+      owner: root
+      group: root
+      mode: '0644'
+    when: apache_status.rc|int == 0
+
+  - name: Enable Apache ssl mod
+    apache2_module:
+      name: ssl
+      state: present
+    when: apache_status.rc|int == 0
+
+  - name: Comment out lines in security.conf that cci.conf overrides
+    lineinfile:
+      path: /etc/apache2/conf-enabled/security.conf
+      regexp: "^ServerTokens OS"
+      line: "# ServerTokens OS"
+    when: apache_status.rc|int == 0
+
+  - name: Comment out lines in security.conf that cci.conf overrides
+    lineinfile:
+      path: /etc/apache2/conf-enabled/security.conf
+      regexp: "^ServerSignature On"
+      line: "# ServerSignature Off"
+    when: apache_status.rc|int == 0
+
+  - name: Enable Apache conf
+    shell:
+      cmd: a2enconf apache-settings
+    when: apache_status.rc|int == 0
+
+# for security
+  - name: Disable Apache2 dir listing
+    shell:
+      cmd: a2dismod autoindex -f
+    when: apache_status.rc|int == 0
+
+  - name: Restart and reload apache
+    systemd:
+      state: restarted
+      daemon-reload: yes
+      name: apache2
+    when: apache_status.rc|int == 0

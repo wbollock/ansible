@@ -1,0 +1,5 @@
+---
+- hosts: apache_servers
+  tasks:
+    - include_role:
+        name: apache

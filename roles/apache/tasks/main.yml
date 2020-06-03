@@ -1,3 +1,6 @@
 ---
 - name: Setup Apache
   import_tasks: apache.yaml
+
+- name: Apache Security
+  import_tasks: security.yaml

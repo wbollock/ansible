@@ -11,33 +11,17 @@
       state: present
     when: apache_status.rc|int != 0
 
+  - name: Install php
+    apt:
+      name: php
+      state: present
+
   - name: Enable and start apache
     systemd:
       state: started
       enabled: yes
       name: apache2
     when: apache_status.rc|int != 0
-
-
-  - name: Add cci.conf to apache (security settings)
-    copy:
-      src: ../files/apache-sslprotocols.conf
-      dest: /etc/apache2/conf-available/ssl-protocols.conf
-      owner: root
-      group: root
-      mode: '0644'
-    when: apache_status.rc|int == 0
-
-  - name: Enable Apache ssl mod
-    apache2_module:
-      name: ssl
-      state: present
-    when: apache_status.rc|int == 0
-
-  - name: Enable Apache conf
-    shell:
-      cmd: a2enconf ssl-protocols
-    when: apache_status.rc|int == 0
 
   - name: Restart and reload apache
     systemd:

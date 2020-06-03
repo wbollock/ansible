@@ -1,0 +1,5 @@
+---
+- hosts: mysql_servers
+  tasks:
+    - include_role:
+        name: mysql

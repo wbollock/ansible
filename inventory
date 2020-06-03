@@ -1,15 +1,12 @@
-# Required Roles
-[web_db_servers]
+[apache_servers]
 wboll.dev
 
-[normal]
-asimov.boll
-localhost
+[mysql_servers]
+wboll.dev
+
 #boris.boll
 #wait until it's arch compatiable
 
-
-# Optional Roles
 [docker]
 wboll.dev
 localhost
