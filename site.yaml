@@ -3,3 +3,4 @@
 - import_playbook: mysql_servers.yaml
 - import_playbook: docker.yaml
 - import_playbook: common.yaml
+- import_playbook: windows.yaml
