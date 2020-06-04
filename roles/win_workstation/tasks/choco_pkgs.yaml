@@ -1,0 +1,28 @@
+---
+  - name: Install a base set of packages
+    win_chocolatey:
+      name:
+      - brave
+      - spotify
+      - microsoft-windows-terminal
+      - microsoft-teams #not machine-wide
+      - hwinfo
+      - msiafterburner
+      - openconnect-gui #may not work
+      - discord
+      - office-tool # installer for office?
+      - zoom
+      - sharex
+      - vlc
+      - steam
+      - filezilla
+      - eartrumpet
+      - vscode
+      - zerotier-one
+      - geforce-experience
+      state: present
+
+# cannot install
+# BakkesMod
+# mullvad
+# onedrive

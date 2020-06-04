@@ -23,6 +23,22 @@ asimov.boll
 [windows]
 sandworm.boll
 
+[linux:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_become=true
+ansible_user=ansible
+ansible_become_method=sudo
+ansible_ask_become_pass=true
+ansible_ask_pass=true
+
+[windows:vars]
+ansible_user=ansible
+ansible_become_user=ansible
+ansible_connection=winrm
+ansible_winrm_transport=basic
+ansible_winrm_server_cert_validation=ignore
+ansible_become_method=runas
+ansible_become=true
+
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
-become=true

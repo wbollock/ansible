@@ -1,2 +1,4 @@
 ---
 # tasks file for win_workstation
+- name: Install Chocolatey Packages
+  import_tasks: choco_pkgs.yaml
