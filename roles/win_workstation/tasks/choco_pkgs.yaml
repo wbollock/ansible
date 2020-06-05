@@ -1,26 +1,59 @@
----
-  - name: Install a base set of packages
+--- 
+  - name: Ensure Chocolatey itself is installed
     win_chocolatey:
-      name:
-      - brave
-      - spotify
-      - microsoft-windows-terminal
-      - microsoft-teams #not machine-wide
-      - hwinfo
-      - msiafterburner
-      - openconnect-gui #may not work
-      - discord
-      - office-tool # installer for office?
-      - zoom
-      - sharex
-      - vlc
-      - steam
-      - filezilla
-      - eartrumpet
-      - vscode
-      - zerotier-one
-      - geforce-experience
+      name: chocolatey
+ 
+  - name: Confirm Prompts Automatically
+    win_chocolatey_feature:
+      name: allowGlobalConfirmation
+      state: enabled
+
+  - name: Essentials
+    win_chocolatey:
+      name: '{{ item }}'
       state: present
+    loop:
+    #- brave - also manual, per user
+    #- microsoft-windows-terminal - logs off user. broken. installing manually
+    - hwinfo
+    - msiafterburner
+    - steam
+    - vscode
+    - geforce-experience
+    - 7zip
+
+  - name: Work Applications
+    win_chocolatey:
+      name: '{{ item }}'
+      state: present
+    loop:
+    - microsoft-teams.install
+    - zoom
+
+  - name: System Settings
+    win_chocolatey:
+      name: '{{ item }}'
+      state: present
+    loop:
+    - classic-shell
+    - f.lux
+    - wsl
+   
+  - name: Additional Applications
+    win_chocolatey:
+      name: '{{ item }}'
+      state: present
+    loop:
+    - vlc
+    - eartrumpet
+    - sharex
+    - zerotier-one
+    #- spotify manual
+    - discord
+    - filezilla
+    - equalizerapo
+    - calibre
+    - sumatrapdf.install
 
 # cannot install
 # BakkesMod
