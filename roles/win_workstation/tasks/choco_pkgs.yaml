@@ -21,6 +21,7 @@
     - vscode
     - geforce-experience
     - 7zip
+    - firefox
 
   - name: Work Applications
     win_chocolatey:
@@ -38,6 +39,7 @@
     - classic-shell
     - f.lux
     - wsl
+    - logitechgaming
    
   - name: Additional Applications
     win_chocolatey:
@@ -54,6 +56,7 @@
     - equalizerapo
     - calibre
     - sumatrapdf.install
+    - qbittorrent
 
 # cannot install
 # BakkesMod
