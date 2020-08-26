@@ -40,6 +40,7 @@
     - f.lux
     - wsl
     - logitechgaming
+    - treesizefree
    
   - name: Additional Applications
     win_chocolatey:
@@ -57,6 +58,10 @@
     - calibre
     - sumatrapdf.install
     - qbittorrent
+    - kindle
+    - wireshark
+    #- epicgameslauncher #ehhh dont need it
+    
 
 # cannot install
 # BakkesMod
