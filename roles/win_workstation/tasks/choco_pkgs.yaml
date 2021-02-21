@@ -9,12 +9,14 @@
       state: enabled
 
   - name: Essentials
+    ignore_errors: yes
     win_chocolatey:
       name: '{{ item }}'
       state: present
+      ignore_checksums: yes
     loop:
-    #- brave - also manual, per user
-    #- microsoft-windows-terminal - logs off user. broken. installing manually
+    - brave
+    - microsoft-windows-terminal
     - hwinfo
     - msiafterburner
     - steam
@@ -24,17 +26,22 @@
     - firefox
 
   - name: Work Applications
+    ignore_errors: yes
     win_chocolatey:
       name: '{{ item }}'
       state: present
+      ignore_checksums: yes
     loop:
     - microsoft-teams.install
     - zoom
+    - teamviewer
 
   - name: System Settings
+    ignore_errors: yes
     win_chocolatey:
       name: '{{ item }}'
       state: present
+      ignore_checksums: yes
     loop:
     - classic-shell
     - f.lux
@@ -43,15 +50,17 @@
     - treesizefree
    
   - name: Additional Applications
+    ignore_errors: yes
     win_chocolatey:
       name: '{{ item }}'
       state: present
+      ignore_checksums: yes
     loop:
     - vlc
     - eartrumpet
     - sharex
     - zerotier-one
-    #- spotify manual
+    - spotify
     - discord
     - filezilla
     - equalizerapo
@@ -60,13 +69,23 @@
     - qbittorrent
     - kindle
     - wireshark
-    #- epicgameslauncher #ehhh dont need it
+    - minecraft-launcher
+    - epicgameslauncher
     
 
 # cannot install
 # mullvad
 # onedrive
+# cisco VPN
+
+# Manual/Might not work (still with PoSH)
+# spotify
+# microsoft-windows-terminal
 
 # Game Mods
 # MGSV5 - FoV fix, Infinite Heaven (Snakebite Mod Manager)
 # BakkesMod
+# Minecraft - BSL Shader, Java, and Optifine
+
+# Backup
+# Desktop/Home Folder

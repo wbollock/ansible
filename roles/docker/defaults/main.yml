@@ -44,3 +44,10 @@ node_exporter_ports: '9100:9100'
 
 node_exporter_docker_additional_options:
   restart_policy: unless-stopped
+  command: 
+    - '--path.rootfs=/host'
+    - '--collector.systemd'
+    - '--collector.processes'
+  volumes:
+    - '/:/host:ro,rslave'
+    - '/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket'
