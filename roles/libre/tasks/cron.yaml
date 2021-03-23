@@ -1,0 +1,13 @@
+---
+- name: Creates a cron file under /etc/cron.d to enforce Libre premissions (every 2 hours)
+  cron:
+    name: librenms_perms
+    weekday: "*"
+    minute: "*/120"
+    hour: "*"
+    month: "*"
+    user: root
+    state: present
+    job: "chown -R librenms:librenms /opt/librenms; sudo setfacl -d -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/; sudo chmod -R ug=rwX /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/"
+    cron_file: /etc/crontab
+

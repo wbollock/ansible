@@ -29,3 +29,5 @@
 - include_tasks: watchtower.yml
 
 - include_tasks: node-exporter.yml
+
+- include_tasks: pihole-exporter.yml

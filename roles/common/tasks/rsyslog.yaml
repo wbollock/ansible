@@ -25,8 +25,12 @@
     register: apt_exists
 
   - name: Check if ansible installed
-    stat: path=/usr/bin/ansible
+    stat: path=/usr/local/bin/ansible
     register: ansible_exists
+
+  - name: Check if web15c has a zshrc
+    stat: path=/home/web15c/.zshrc
+    register: web15c_zshrc_exists
 
   - name: Make sure rsyslog is up to date
     apt:
@@ -87,6 +91,43 @@
       group: root
       mode: '0644'
     when: ansible_exists.stat.exists == True
+
+  - name: Add lines to enable bash logging
+    blockinfile:
+      path: /etc/bash.bashrc
+      insertafter: EOF
+      state: present
+      block: |
+        export PROMPT_COMMAND='RETRN_VAL=$?;logger -p local6.debug "$(whoami) [$$]: $(history 1 | sed "s/^[ ]*[0-9]\+[ ]*//" ) [$RETRN_VAL]"'
+#"
+# fixing yaml with above
+
+  - name: Make sure ZSH installed
+    apt:
+      name: zsh
+      state: present
+
+  - name: Add line to global zshrc for logging
+    blockinfile: 
+      path: /etc/zsh/zshrc
+      insertafter: EOF
+      state: present
+      block: |
+        precmd() { eval 'RETRN_VAL=$?;logger -p local6.debug "$(whoami) [$$]: $(history | tail -n1 | sed "s/^[ ]*[0-9]\+[ ]*//" ) [$RETRN_VAL]"' }
+    #when: web15c_zshrc_exists.stat.exists == True
+    #with_fileglob:
+    #  - "/home/*/.zshrc"
+
+  - name: Add rsyslog conf for bash/zsh_history
+    copy:
+      src: ../files/rsyslog-06-graylog_bash_zsh.conf
+      dest: /etc/rsyslog.d/06-graylog_bash_zsh.conf
+      owner: root
+      group: root
+      mode: '0644'
+    # also want this
+    # use "facility:local6" in graylog to find all entries
+    
 
   - name: Restart rsyslog service after line appended
     systemd:

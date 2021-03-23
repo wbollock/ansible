@@ -4,7 +4,8 @@
     failed_when: false
     changed_when: false
     register: mysql_status
-# NOTE: on wboll.dev, mysql-client-5.7 and mysql-server-5.7 are usedmysql-server-5.7mysql-server-5.7
+# NOTE: on wboll.dev, mysql-client-5.7 and mysql-server-5.7 are used
+# instead of mysql-server, mysql-client
   - name: Install MySQL
     apt:
       pkg:

@@ -1,2 +1,3 @@
 ---
 # defaults file for libre
+wanted_php_version: '7.4'

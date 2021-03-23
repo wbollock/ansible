@@ -5,3 +5,9 @@
 
 - name: Setup PHP
   import_tasks: php.yaml
+
+- name: Add to crontab for perms
+  import_tasks: cron.yaml
+
+- name: Change librenms shell
+  import_tasks: chsh.yaml

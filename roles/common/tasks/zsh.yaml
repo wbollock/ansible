@@ -60,13 +60,6 @@
             exec /bin/zsh -l    # -l: login shell again
         fi
 
-   # also enable tldr per user
-  - name: Download TLDR bash client
-    get_url:
-      url: https://raw.githubusercontent.com/raylee/tldr/master/tldr
-      dest: /usr/bin/tldr
-      mode: '0755'
-
   - name: Recurisvely set permissions on ~/.config
     file:
       path: /home/{{ zsh_user }}/.config

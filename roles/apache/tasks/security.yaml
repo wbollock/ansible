@@ -5,7 +5,7 @@
     changed_when: false
     register: apache_status
 
-  - name: Add cci.conf to apache (security settings)
+  - name: Add seucrity.conf to apache (security settings)
     copy:
       src: ../files/apache-settings.conf
       dest: /etc/apache2/conf-available/apache-settings.conf

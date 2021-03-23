@@ -5,7 +5,6 @@
 - name: Check for php version
   shell: php -v | grep -Po '(?<=PHP )([0-9.][0-9.][0-9])'
   register: php_version
-  ignore_errors: yes
 
 - name: Print php version
   debug:
@@ -15,26 +14,35 @@
   debug:
     msg: "{{ wanted_php_version | float }}"
 
+- name: Check if Apache exists
+  shell: systemctl status apache2
+  failed_when: false
+  changed_when: false
+  register: apache_status
+
 - name: Add ondrej apache2 php repo
   apt_repository:
     repo: ppa:ondrej/apache2 
     state: present
+  when: apache_status.rc|int == 0 and ansible_distribution == 'Ubuntu' and php_version.stdout|float < wanted_php_version|float and ansible_distribution_version <= '20.04'
 
 - name: Update Apache2 for new repo
   apt:
     name: apache2
     state: present
+  when: apache_status.rc|int == 0 and ansible_distribution == 'Ubuntu' and php_version.stdout|float < wanted_php_version|float
+  register: apache2
 
 - name: Add PHP repo
   apt_repository:
     repo: ppa:ondrej/php
     state: present
+  when: ansible_distribution == 'Ubuntu' and php_version.stdout|float < wanted_php_version|float and ansible_distribution_version <= '20.04'
 
 - name: Update PHP to {{ wanted_php_version }}
   apt:
     pkg:
     - libapache2-mod-php{{ wanted_php_version }}
-    - php{{ wanted_php_version }}-common
     - php{{ wanted_php_version }}
     - php{{ wanted_php_version }}-cli
     - php{{ wanted_php_version }}-curl
@@ -73,7 +81,6 @@
     - php{{ wanted_php_version }}-zip
     - php{{ wanted_php_version }}-memcached
     - php{{ wanted_php_version }}-ldap
-    - php{{ wanted_php_version }}-common
     - python3-pip
   when: ansible_distribution == 'Ubuntu'
 
@@ -94,5 +101,6 @@
 
 - name: Start Apache if it was just installed or php updated
   systemd:
-    state: restarted
+    state: started
     name: apache2
+  when: apache2.changed or php_update.changed

@@ -1,0 +1,19 @@
+---
+  - name: Increase SSHD Timeout
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^#ClientAliveInterval 0'
+      line: ClientAliveInterval 400
+
+  - name: Increase SSHD Timeout
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^#ClientAliveCountMax 3'
+      line: ClientAliveCountMax 3
+  
+
+  - name: Restart SSHD
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: sshd

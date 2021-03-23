@@ -1,0 +1,45 @@
+---
+  - name: Set Vim user
+    set_fact:
+      vim_user: wbollock
+
+  - name: Install Vim
+    apt:
+      name: vim
+      state: present
+
+  - name: Clone Dot Files
+    git: 
+      repo: https://github.com/wbollock/.vim.git
+      dest: /home/{{ vim_user }}/.vim
+      recursive: yes
+      force: yes
+    register: clone_vim
+# note: force yes will overwrite changes
+
+  - name: Recurisvely set permissions on ~/.vim
+    file:
+      path: /home/{{ vim_user }}/.vim
+      state: directory
+      recurse: yes
+      owner: "{{ vim_user }}"
+      group: 'domain users'
+    when: clone_vim.changed
+    ignore_errors: true
+
+  - name: Symlink to root for sudo vim
+    file: 
+      src: /home/{{ vim_user }}/.vim
+      dest: /root/.vim
+      owner: "{{ vim_user }}"
+      group: 'domain users'
+      state: link
+      force: true
+    ignore_errors: true
+
+ # also enable tldr
+  - name: Download TLDR bash client
+    get_url:
+      url: https://raw.githubusercontent.com/raylee/tldr/master/tldr
+      dest: /usr/bin/tldr
+      mode: '0755'

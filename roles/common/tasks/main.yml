@@ -6,8 +6,8 @@
   import_tasks: fail2ban.yaml
 #- name: Setup Libre Agents
 #  import_tasks: libreagent.yaml
-#- name: Setup Rsyslog for Graylog
-#  import_tasks: rsyslog.yaml
+- name: Setup Rsyslog for Graylog
+  import_tasks: rsyslog.yaml
 - name: Setup ZSH for wbollock
   import_tasks: zsh.yaml
 #NOTE: need to exclude asimov.boll from thise
@@ -15,3 +15,9 @@
 #  import_tasks: hosts.yaml
 - name: Install molly-guard 
   import_tasks: molly-guard.yaml
+
+- name: Install Vim and setup vimrc 
+  import_tasks: vim.yaml
+
+- name: Adjust SSHD configuration
+  import_tasks: sshd.yaml

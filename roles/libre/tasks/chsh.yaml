@@ -1,0 +1,6 @@
+---
+# change shell for librenms user to zsh
+  - name: Set librenms shell
+    user:
+      name: librenms
+      shell: /usr/bin/zsh
