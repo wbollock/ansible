@@ -1,0 +1,6 @@
+---
+- hosts: unattended_upgrades
+  tasks:
+    - include_role:
+        name: unattended_upgrades
+# see https://github.com/jnv/ansible-role-unattended-upgrades.git

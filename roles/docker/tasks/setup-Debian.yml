@@ -39,3 +39,4 @@
     state: present
     update_cache: true
   ignore_errors: yes
+  when: inventory_hostname != "wboll.dev"

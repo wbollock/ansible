@@ -38,14 +38,26 @@
       state: present 
 
     # base file, all hosts get this
-  - name: Basic syslog logging and forwarding to servermgr
+  - name: Basic syslog logging and forwarding to graylog
     copy:
       src: ../files/rsyslog-00-graylog.conf
       dest: /etc/rsyslog.d/00-graylog.conf
       owner: root
       group: root
       mode: '0644'
+    when: inventory_hostname != "wboll.dev"
   #install rsyslog
+
+  - name: wboll.dev only - Basic syslog logging and forwarding to graylog
+    copy:
+      src: ../files/rsyslog-00-graylog-wboll-dev.conf
+      dest: /etc/rsyslog.d/00-graylog.conf
+      owner: root
+      group: root
+      mode: '0644'
+    when: inventory_hostname == "wboll.dev"
+
+
 # adds access and error.log to logging if apache installed
   - name: Add rsyslog conf for apache
     copy:

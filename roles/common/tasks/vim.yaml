@@ -23,7 +23,7 @@
       state: directory
       recurse: yes
       owner: "{{ vim_user }}"
-      group: 'domain users'
+      group: "{{ vim_user }}"
     when: clone_vim.changed
     ignore_errors: true
 
@@ -32,7 +32,7 @@
       src: /home/{{ vim_user }}/.vim
       dest: /root/.vim
       owner: "{{ vim_user }}"
-      group: 'domain users'
+      group: "{{ vim_user }}"
       state: link
       force: true
     ignore_errors: true

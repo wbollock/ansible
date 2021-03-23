@@ -15,6 +15,11 @@ asimov.boll
 [bitwarden]
 wboll.dev
 
+[unattended_upgrades]
+wboll.dev
+localhost
+asimov.boll
+
 [linux]
 wboll.dev
 localhost
@@ -22,6 +27,7 @@ asimov.boll
 
 [windows]
 sandworm.boll
+
 
 [linux:vars]
 ansible_python_interpreter=/usr/bin/python3

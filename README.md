@@ -1,8 +1,8 @@
 # ansible
-Homelab ansible repo
+Homelab Ansible repo
 
-Pick and choose anything you want!
-Not perfect ansible practices due to homelabbing :)
-
-## Things I'm Proud Of
-My favorite playbook/tasks are the `zsh` task in `common`, and `fridayUpdates` in `playbooks` as of this writing.
+Supports:
+ * Debian web servers
+ * Windows workstations
+ * Docker setup for Debian/raspberry pi
+ * User-specific quality of life changes, like vim and zsh
