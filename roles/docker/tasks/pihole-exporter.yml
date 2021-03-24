@@ -2,12 +2,14 @@
 - name: pihole-exporter
   community.docker.docker_container:
     name: pihole-exporter
-    image: ekofr/pihole-exporter:latest
-    state: present
+    image: ekofr/pihole-exporter:0.0.10
+    state: started
+    restart: yes
+    restart_policy: always
     ports:
     - "9617:9617"
     env:
-      PIHOLE_HOSTNAME: "192.168.0.186"
+      PIHOLE_HOSTNAME: "192.168.0.102"
       PIHOLE_API_TOKE: "011346ab26bcc63781dd82984471bf9e39fc210eeda6c5f145fc77f2e202bafc"
       INTERVAL: "30s"
       PORT: "9617"
