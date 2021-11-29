@@ -8,6 +8,11 @@
       name: zsh
       state: present
 
+  - name: Install git
+    apt:
+      name: git
+      state: present
+
   - name: Clone Prezto
     git: 
       repo: https://github.com/sorin-ionescu/prezto.git

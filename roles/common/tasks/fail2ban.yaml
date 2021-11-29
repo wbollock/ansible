@@ -1,9 +1,30 @@
 ---
-  - name: Check if Apache exists
-    shell: systemctl status apache2
-    failed_when: false
-    changed_when: false
-    register: apache_status
+ # - name: Check if Apache exists # btw this sucks, systemctl status to check if apache is installed?
+ #   shell: systemctl status apache2
+ #   #failed_when: false
+ #   changed_when: false
+ #   register: apache_systemd_status
+
+ # - name: Set apache status if not found
+ #   set_fact:
+ #     apache_status: 2
+ #   when: ( apache_systemd_status is defined ) and ( apache_systemd_status is mapping ) # if systemd doesn't find apache, returns a dict..
+
+ # - name: Set apache status if found
+ #   set_fact:
+ #     apache_status: 0
+ #   when: apache_systemd_status is not mapping # this is stupid, but if not a dict it probably exists
+  - name: "Check if APACHE is installed"
+    package_facts:
+      manager: "auto"
+  - name: "Apache result"
+    debug:
+      msg: "Apache found"
+    when: "'apache2' in ansible_facts.packages"
+  - name: "Apache result"
+    debug:
+      msg: "Apache NOT found"
+    when: "'apache2' not in ansible_facts.packages"
 
   - name: install apt fail2ban packages
     apt:
@@ -17,7 +38,7 @@
       owner: root
       group: root
       mode: 0644
-    when: apache_status.rc|int != 0
+    when: "'apache2' not in ansible_facts.packages"
     notify:
       - restart fail2ban
 
@@ -28,7 +49,7 @@
       owner: root
       group: root
       mode: 0644
-    when: apache_status.rc|int == 0
+    when: "'apache2' in ansible_facts.packages"
     register: apache_only_jail
     notify:
       - restart fail2ban
@@ -40,7 +61,7 @@
       owner: root
       group: root
       mode: 0644
-    when: apache_status.rc|int == 0
+    when: "'apache2' in ansible_facts.packages"
     register: apache_404_jail
     notify:
       - restart fail2ban

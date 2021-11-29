@@ -11,6 +11,7 @@ wboll.dev
 wboll.dev
 localhost
 asimov.boll
+yabu.boll
 
 [bitwarden]
 wboll.dev
@@ -19,11 +20,15 @@ wboll.dev
 wboll.dev
 localhost
 asimov.boll
+circe.wboll.dev
+yabu.boll
 
 [linux]
 wboll.dev
 localhost
 asimov.boll
+circe.wboll.dev
+yabu.boll
 
 [windows]
 sandworm.boll

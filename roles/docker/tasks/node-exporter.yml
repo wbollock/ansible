@@ -2,7 +2,7 @@
 - name: Install python docker packages
   apt:
     pkg:
-    - python-docker
+    - python3-docker
     - python3-pip
  
 # pip3 install --upgrade pip
